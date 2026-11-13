@@ -73,6 +73,19 @@ const chosen = selectPeerRouter(callerRouter);
 check("Peer network runs on the CALLER's router (key never sent to the peer)", chosen.baseUrl === callerRouter.baseUrl,
   "selectPeerRouter takes only the caller's router; the peer manifest's llm_router is never used");
 
+// 6b. CRUSE form repair: the exact form Gemini sent on 13 Nov (fields without the `properties` wrapper) now renders,
+//     and a form with no real fields is still rejected.
+const { normalizePresentation } = await imp("cruse.js");
+const geminiForm = { version: 1, components: [{ kind: "form", id: "savings_form", title: "Enter details to calculate exact savings",
+  schema: { pan_d_per_day: { title: "Pan-D: Tablets taken per day", type: "number" },
+    pan_d_strip_size: { type: "integer", title: "Pan-D: Tablets per strip" },
+    pan_d_current_price: { title: "Pan-D: Current price per strip (₹)", type: "number" } } }] };
+const fixed = normalizePresentation(geminiForm);
+check("Form without the 'properties' wrapper is repaired and shown", fixed.issues.length === 0 &&
+  Object.keys(fixed.presentation?.components?.[0]?.schema?.properties || {}).length === 3);
+const junk = normalizePresentation({ version: 1, components: [{ kind: "form", title: "x", schema: { a: "text", b: 3 } }] });
+check("A form with no real fields is still rejected", !junk.presentation && junk.issues.length === 1, junk.issues[0] || "");
+
 // 7. Live site: published files are reachable cross-origin, and the coded-tool bundle matches its SRI pin
 const live = async (url) => { const r = await fetch(url); return { ok: r.ok, acao: r.headers.get("access-control-allow-origin"), csp: r.headers.get("content-security-policy"), buf: Buffer.from(await r.arrayBuffer()) }; };
 const lm = await live(`${PEER}/agent-manifest.json`);

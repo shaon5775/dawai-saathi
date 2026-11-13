@@ -34,8 +34,11 @@ function strengths(text) {
   while ((m = re.exec(String(text)))) out.push(`${parseFloat(m[1])}${m[2].toLowerCase().replace("µg", "mcg")}`);
   return out;
 }
+// Number of active ingredients in a product name. Names join them with "and", "&", "+", "with" or "/"
+// (13 Nov fix: "Sitagliptin 50mg & Metformin 500mg" was counted as ONE ingredient and matched plain Metformin).
 function componentCount(name) {
-  return norm(name).split(/\band\b/).length;
+  const raw = String(name || "").toLowerCase().replace(/w\/w|w\/v|v\/v/g, " ");
+  return raw.split(/\band\b|&|\+|\bwith\b|\s\/\s/).filter((s) => /[a-z]{3}/.test(s)).length;
 }
 
 // "Pantoprazole 40 mg + Domperidone 30 mg" -> [{words:[pantoprazole], strength:"40mg"}, ...]
@@ -44,7 +47,14 @@ function parseQuery(salts) {
   return parts.map((p) => ({ text: p, words: words(p), strength: strengths(p)[0] || null })).filter((c) => c.words.length);
 }
 
-function scoreProduct(p, comps, form) {
+// Release type (SR/ER/XR...) changes how a medicine works; never call plain and slow-release "exact".
+// Gastro-resistant / enteric coating is not counted (all Jan Aushadhi pantoprazole etc. is gastro-resistant).
+const RELEASE = /\b(sr|er|xr|cr|xl|pr|prolonged|sustained|extended|controlled|modified)\b/i;
+function hasRelease(text) {
+  return RELEASE.test(String(text || ""));
+}
+
+function scoreProduct(p, comps, form, queryText) {
   const name = norm(p.name);
   const nameStrengths = strengths(p.name);
   let saltHits = 0, strengthHits = 0;
@@ -59,10 +69,12 @@ function scoreProduct(p, comps, form) {
   const formOk = !form || p.form === form;
   const allSalts = saltHits === comps.length;
   const allStrengths = strengthHits === comps.filter((c) => c.strength).length;
+  const releaseOk = hasRelease(p.name) === hasRelease(queryText);
   let match = "partial";
-  if (allSalts && extra === 0 && allStrengths && formOk) match = "exact";
+  if (allSalts && extra === 0 && allStrengths && formOk && releaseOk) match = "exact";
+  else if (allSalts && extra === 0 && allStrengths && !releaseOk) match = "same salt, different release type (SR/ER) - ask the pharmacist";
   else if (allSalts && extra === 0) match = allStrengths ? "same medicine, different form" : "same salt, different strength";
-  const score = saltHits * 10 + strengthHits * 6 - extra * 8 + (formOk ? 3 : 0) + (allSalts ? 10 : 0);
+  const score = saltHits * 10 + strengthHits * 6 - extra * 8 + (formOk ? 3 : 0) + (allSalts ? 10 : 0) + (releaseOk ? 4 : 0);
   return { score, match };
 }
 
@@ -74,7 +86,7 @@ export class JanAushadhiLookup {
     const form = FORMS.find((f) => String(args.form || "").toLowerCase().startsWith(f.slice(0, 5))) || "";
     const scored = [];
     for (const p of TABLE) {
-      const s = scoreProduct(p, comps, form);
+      const s = scoreProduct(p, comps, form, args.salts || args.inquiry || "");
       if (s) scored.push({ ...s, p });
     }
     scored.sort((a, b) => b.score - a.score || (a.p.per_unit ?? 1e9) - (b.p.per_unit ?? 1e9));

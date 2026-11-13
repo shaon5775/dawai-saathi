@@ -15,3 +15,19 @@ for (const c of cases) {
   console.log(`${c.padEnd(42)} → ${r.best_match.padEnd(30)} ${top ? `${top.generic_name} | ${top.pack} | ₹${top.mrp_rs} (₹${top.price_per_unit_rs}/unit)` : "-"}`);
 }
 console.log(`exact: ${exact}/${cases.length}`);
+
+// A single-salt query must never call a combination product "exact" (bug found 13 Nov: "&" was not counted).
+let bad = 0;
+for (const single of ["Metformin 500 mg", "Paracetamol 325 mg", "Telmisartan 40 mg", "Amlodipine 5 mg"]) {
+  for (const p of tool.invoke({ salts: single, max_results: 8 }).results) {
+    const combo = /\band\b|&|\+|\bwith\b/i.test(p.generic_name.replace(/w\/w|w\/v/gi, ""));
+    if (p.match === "exact" && combo) { bad += 1; console.log(`  WRONG exact: ${single} -> ${p.generic_name}`); }
+  }
+}
+// Release type: plain vs SR must not both be "exact"; Pan-D (Domperidone SR capsule) must be exact.
+const plain = tool.invoke({ salts: "Metformin 500 mg", form: "tablet", max_results: 8 }).results;
+const srAsExact = plain.filter((p) => p.match === "exact" && /prolonged|sustained|extended/i.test(p.generic_name));
+console.log(srAsExact.length ? `release check: WRONG (${srAsExact[0].generic_name})` : "release check: OK (SR not exact for plain Metformin)");
+const pand = tool.invoke({ salts: "Pantoprazole 40 mg + Domperidone 30 mg SR", form: "capsule" });
+console.log(`Pan-D with SR: ${pand.best_match} -> ${pand.results[0]?.generic_name}`);
+console.log(bad ? `combination check: ${bad} wrong` : "combination check: OK (no combination product marked exact for a single salt)");

@@ -1,0 +1,59 @@
+{
+  "metadata": {
+    "description": "Dawai Saathi helps Indian families find the cheaper Jan Aushadhi generic for the medicines their doctor wrote, explains it in Bengali, Hindi or English, and shows the monthly saving. Prices come from the Jan Aushadhi Price Desk, a separate open agentic website.",
+    "sample_queries": [
+      "Doctor wrote Pan-D and Telma 40. Is there a cheaper one?",
+      "আমার মা Glycomet GP 1 আর Ecosprin 75 খান। সস্তা কোনটা?",
+      "मेरे पापा Rosuvas 10 और Amlong 5 लेते हैं, सस्ता विकल्प?"
+    ]
+  },
+  "llm_config": { "model_name": "gemini-3.5-flash-lite" },
+  "max_execution_seconds": 240,
+  "cruse": { "version": 1 },
+  "link_slots": {
+    "jan_aushadhi_prices": {
+      "description": "Jan Aushadhi Price Desk: official Jan Aushadhi generic, pack, MRP and price per unit for salts with strength."
+    }
+  },
+  "link_labels": { "jan_aushadhi_prices": "Jan Aushadhi Price Desk" },
+  "tools": [
+    {
+      "name": "dawai_saathi_desk",
+      "function": {
+        "description": "Helps a family find cheaper Jan Aushadhi generics for their medicines and the monthly saving.",
+        "parameters": {
+          "type": "object",
+          "properties": { "inquiry": { "type": "string", "description": "The user's message" } },
+          "required": ["inquiry"]
+        }
+      },
+      "instructions": "You are Dawai Saathi, a kind helper for Indian families who pay too much for medicines. LANGUAGE: reply in the language of the user's LATEST message: English message -> simple English; Bengali (বাংলা letters or Banglish) -> Bengali in বাংলা letters; Hindi (देवनागरी or Hinglish) -> Hindi in देवनागरी. Never switch language on your own; form labels follow the same language. Steps for medicines the user names: (1) call medicine_reader with all the names to get salt and strength; (2) call jan_aushadhi_prices once with all salts and strengths, separated by semicolons, including form (tablet/capsule); (3) for every medicine with an EXACT match, if the user told you what they pay now (per strip and tablets per strip) and how many they take per day, call website_calculate_monthly_saving; otherwise ask for those numbers in one short question; (4) ALWAYS show, per medicine, before any question: brand → salt → Jan Aushadhi generic name, pack, MRP and price per tablet (from jan_aushadhi_prices), then the saving if known. Use only numbers returned by tools. If a match is not exact (different strength or form), say so and do not offer it as a replacement. Then ASK whether to save the list on this page (to show at a Jan Aushadhi Kendra); call website_save_medicine_list ONLY after the user says yes or presses a Save button. Show the saving per medicine and the total. Safety rules, always: never tell anyone to stop, start or change a medicine or dose; never diagnose; end with 'Show this to your doctor or pharmacist before switching.' in the user's language. Kendra finder: Jan Aushadhi Sugam app or toll-free 1800-180-8080.",
+      "tools": ["medicine_reader", "jan_aushadhi_prices"]
+    },
+    {
+      "name": "medicine_reader",
+      "function": {
+        "description": "Turns medicine names as the user wrote them (brand names, generic names, misspellings, Bengali/Hindi script) into salt names with strength and form.",
+        "parameters": {
+          "type": "object",
+          "properties": { "inquiry": { "type": "string", "description": "The medicine names exactly as the user gave them" } },
+          "required": ["inquiry"]
+        }
+      },
+      "instructions": "Convert each medicine the user named into: name as written, salt(s) with strength, form. First write brand names in Latin letters (for example 'প্যান ডি' -> 'Pan-D', 'टेल्मा 40' -> 'Telma 40') and call brand_to_salt with all of them, comma separated. Use the tool's salts when found. If the user already gave a generic name with strength, keep it. If a brand is not found, do NOT guess its composition: report it as 'unknown, ask the user to read the generic name and strength printed on the strip'. Return a short list, one medicine per line: '<as written> => <salts with strength> (<form>)'.",
+      "tools": ["brand_to_salt"]
+    },
+    {
+      "name": "brand_to_salt",
+      "function": {
+        "description": "Looks up common Indian medicine brands and returns their salt (generic) composition, strength and form.",
+        "parameters": {
+          "type": "object",
+          "properties": { "names": { "type": "string", "description": "Brand names in Latin letters, comma separated, e.g. 'Pan-D, Telma 40'" } },
+          "required": ["names"]
+        }
+      },
+      "class": "brand_lookup.BrandToSalt"
+    }
+  ]
+}

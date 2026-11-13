@@ -1,0 +1,18 @@
+/agent-manifest.json
+  Access-Control-Allow-Origin: *
+  Cache-Control: no-cache
+/links.json
+  Access-Control-Allow-Origin: *
+  Cache-Control: no-cache
+/agent-mcp.json
+  Access-Control-Allow-Origin: *
+/*.network.json
+  Access-Control-Allow-Origin: *
+  Cache-Control: no-cache
+/tools/*
+  Access-Control-Allow-Origin: *
+  Cache-Control: no-cache
+/data/*
+  Access-Control-Allow-Origin: *
+/runtime/sandbox-worker.js
+  Content-Security-Policy: default-src 'none'; script-src blob:; connect-src 'none'; worker-src 'none'

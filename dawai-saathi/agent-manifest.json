@@ -1,0 +1,90 @@
+{
+  "brand": "Dawai Saathi",
+  "networks": [
+    {
+      "name": "dawai_saathi",
+      "front_man": "dawai_saathi_desk",
+      "hocon": "./dawai_saathi.network.json",
+      "description": "Find the cheaper Jan Aushadhi generic for the medicines your doctor wrote, in Bengali, Hindi or English, and see your monthly saving.",
+      "tags": [
+        "health",
+        "india",
+        "jan-aushadhi",
+        "multilingual",
+        "savings"
+      ],
+      "sample_queries": [
+        "Doctor wrote Pan-D and Telma 40. Is there a cheaper one?",
+        "আমার মা Glycomet GP 1 আর Ecosprin 75 খান। সস্তা কোনটা?",
+        "मेरे पापा Rosuvas 10 और Amlong 5 लेते हैं, सस्ता विकल्प?"
+      ]
+    }
+  ],
+  "llm_router": {
+    "base_url": "https://generativelanguage.googleapis.com/v1beta/openai",
+    "byok_router": "https://generativelanguage.googleapis.com/v1beta/openai",
+    "mock": false,
+    "note": "Bring your own key. A free Google AI Studio (Gemini) key works: router https://generativelanguage.googleapis.com/v1beta/openai, model gemini-3.5-flash-lite. OpenAI or OpenRouter keys also work."
+  },
+  "allowed_peers": [
+    "https://janaushadhi-price-desk.pages.dev"
+  ],
+  "peer_policy": {
+    "mode": "closed",
+    "deny_origins": [],
+    "note": "Only the Jan Aushadhi Price Desk may be contacted, after the user approves."
+  },
+  "agent_mcp": {
+    "protocol": "nsdeploy-agent-mcp/v1",
+    "network": "dawai_saathi",
+    "front_man": "dawai_saathi_desk",
+    "available": false,
+    "reason": "Static site: no public MCP facade. Call this network as a peer agent network instead (it runs in your browser)."
+  },
+  "coded_tools": {
+    "bundle": "./tools/brand_lookup.js",
+    "integrity": "sha384-Zsu4FJAPw20lJFhqOXG6dzb7Vq+jazNbF8RjuerFmkgn25oZitIiKGhd9DRr91Oq"
+  },
+  "theme": {
+    "primary": "#1d6b4f"
+  },
+  "linking": {
+    "protocol": "nsdeploy-link/v1",
+    "exports": [
+      {
+        "network": "dawai_saathi",
+        "front_man": "dawai_saathi_desk",
+        "aliases": [
+          "dawai_saathi"
+        ],
+        "url": "dawai_saathi"
+      }
+    ],
+    "imports": [
+      {
+        "reference": "jan_aushadhi_prices",
+        "url": "https://janaushadhi-price-desk.pages.dev/jan_aushadhi_prices"
+      }
+    ],
+    "link_updates": {
+      "mode": "browser-local"
+    }
+  },
+  "deployment": {
+    "mode": "static",
+    "self_contained_runtime": true,
+    "browser_mock": false,
+    "direct_byok": true,
+    "direct_mcp_requires_cors": true,
+    "public_mcp_facade": false
+  },
+  "actions": {
+    "version": 1,
+    "module": "./saathi-actions.js",
+    "agentTools": [
+      "get_my_medicines",
+      "calculate_monthly_saving",
+      "save_medicine_list"
+    ]
+  }
+}

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dawai Saathi — cheaper Jan Aushadhi medicines</title>
+  <meta name="description" content="An open agentic website that finds the Jan Aushadhi generic for your medicines and shows your monthly saving. Bengali, Hindi, English.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="script.js"></script>
+  <script type="module" src="site.js"></script>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div class="brand">💊 Dawai Saathi <span>দাওয়াই সাথী · दवाई साथी</span></div>
+      <h1>Same medicine. Same salt. <em>Much lower price.</em></h1>
+      <p class="lead">Tell us the medicines your doctor wrote — in Bengali, Hindi or English. Dawai Saathi finds the
+        government <b>Jan Aushadhi</b> generic with the same salt and strength, and shows what your family saves every month.</p>
+      <div class="chips"><span>Official PMBI price list · 2,100 medicines</span><span>Your own AI key, nothing stored on a server</span><span>Never changes a dose</span></div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="how">
+      <div><b>1. Say or type</b><p>“Doctor wrote Pan-D and Telma 40.” Brand names, any language.</p></div>
+      <div><b>2. We find the salt</b><p>Pan-D → Pantoprazole 40 mg + Domperidone 30 mg.</p></div>
+      <div><b>3. We ask the Price Desk</b><p>A separate open agentic site with the official Jan Aushadhi list answers with the exact generic and MRP.</p></div>
+      <div><b>4. You see the saving</b><p>₹ per month and per year. Save the list, print it for the pharmacist.</p></div>
+    </section>
+
+    <section class="assistant">
+      <h2>Ask Dawai Saathi</h2>
+      <p id="assistant-status" role="status">Starting the helper…</p>
+      <div id="agent-app"></div>
+      <p class="hint">Try: <code>Doctor wrote Pan-D and Telma 40. Is there a cheaper one?</code> ·
+        <code>আমার মা Glycomet GP 1 আর Ecosprin 75 খান। সস্তা কোনটা?</code> ·
+        <code>मेरे पापा Rosuvas 10 और Amlong 5 लेते हैं, सस्ता विकल्प?</code></p>
+    </section>
+
+    <section class="list">
+      <h2>My medicine list</h2>
+      <div id="my-list"></div>
+    </section>
+
+    <section class="about">
+      <h2>How this works (for builders)</h2>
+      <p>Dawai Saathi is an <a href="https://github.com/cognizant-ai-labs/agentic-web">open agentic website</a>. Its agent
+        network is a public JSON file (<a href="dawai_saathi.network.json">dawai_saathi.network.json</a>,
+        <a href="agent-manifest.json">agent-manifest.json</a>) and runs in your browser. It reads brand names with a small
+        sandboxed lookup tool, then calls the <a id="peer-link" href="https://janaushadhi-price-desk.pages.dev/">Jan Aushadhi Price Desk</a>
+        — another open agentic website that any pharmacy, hospital or NGO site can call — after you approve the contact.
+        Your AI key goes only to the AI provider you choose, never to either site.</p>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    <p><b>Important:</b> Dawai Saathi gives price and generic-name facts only. It does not give medical advice. Never stop,
+      start or change a medicine or dose without your doctor. Always show the list to your doctor or pharmacist before switching.</p>
+    <p class="muted">Prices: Pharmaceuticals &amp; Medical Devices Bureau of India (PMBI), Product &amp; MRP List, janaushadhi.gov.in,
+      list dated 12 Nov 2026. Find a Kendra: Jan Aushadhi Sugam app · toll-free 1800-180-8080. Brand names belong to their owners
+      and are used only to identify the salt. Independent project for the Open Agentic Web Challenge; not affiliated with PMBI.</p>
+  </footer>
+</body>
+</html>

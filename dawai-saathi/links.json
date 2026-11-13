@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "networks": {
+    "dawai_saathi": {
+      "jan_aushadhi_prices": "https://janaushadhi-price-desk.pages.dev/jan_aushadhi_prices"
+    }
+  }
+}

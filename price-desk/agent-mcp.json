@@ -1,0 +1,7 @@
+{
+  "protocol": "nsdeploy-agent-mcp/v1",
+  "network": "jan_aushadhi_prices",
+  "front_man": "jan_aushadhi_price_desk",
+  "available": false,
+  "reason": "Static site: no public MCP facade. Call this network as a peer agent network instead (it runs in your browser)."
+}

@@ -1,0 +1,61 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jan Aushadhi Price Desk — an open agentic website</title>
+  <meta name="description" content="Official Jan Aushadhi generic, pack and MRP for any medicine. A public agent network any website can call.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="site.js"></script>
+</head>
+<body>
+  <header class="hero"><div class="wrap">
+    <div class="brand">🏛️ Jan Aushadhi Price Desk</div>
+    <h1>The official Jan Aushadhi price list, <em>as an agent any website can call.</em></h1>
+    <p class="lead">2,100 medicines with MRP from the PMBI Product &amp; MRP List. Give a salt and strength, get the exact
+      Jan Aushadhi generic, pack, MRP and price per tablet. No guessing: lookups run as a sandboxed tool in your browser.</p>
+  </div></header>
+
+  <main class="wrap">
+    <section>
+      <h2>Quick search (no AI key needed)</h2>
+      <form id="quick" class="row">
+        <input id="q" placeholder="Telmisartan 40 mg   ·   Pantoprazole 40 mg + Domperidone 30 mg" autocomplete="off">
+        <button>Search</button>
+      </form>
+      <div id="results"></div>
+    </section>
+
+    <section class="assistant">
+      <h2>Ask the price desk agent</h2>
+      <p id="assistant-status" role="status">Starting the agent…</p>
+      <div id="agent-app"></div>
+    </section>
+
+    <section class="dev">
+      <h2>Call this network from your own agentic website</h2>
+      <p>Pharmacies, hospitals, NGOs and health apps: add the price desk to your agent network instead of copying the list.
+        The network runs in your visitor's browser with <i>your visitor's</i> AI key; this site never sees the key.</p>
+      <p><b>1.</b> In your network JSON, add a link slot and use it as a tool:</p>
+      <pre>"link_slots": { "jan_aushadhi_prices": { "description": "Jan Aushadhi Price Desk" } },
+"tools": [ { "name": "your_front_agent", "tools": ["jan_aushadhi_prices"], ... } ]</pre>
+      <p><b>2.</b> In your <code>links.json</code>, bind it to this site:</p>
+      <pre id="links-snippet">{ "version": 1, "networks": { "your_network": { "jan_aushadhi_prices": "<span class="me"></span>/jan_aushadhi_prices" } } }</pre>
+      <p><b>3.</b> Add this origin to <code>allowed_peers</code> in your <code>agent-manifest.json</code>, and serve
+        <code>runtime/sandbox-worker.js</code> with the CSP header from our <a href="_headers">_headers</a> (needed for the
+        sandboxed price tool). Public files: <a href="agent-manifest.json">agent-manifest.json</a> ·
+        <a href="jan_aushadhi_prices.network.json">jan_aushadhi_prices.network.json</a> ·
+        <a href="tools/price_lookup.js">tools/price_lookup.js</a> (SRI-pinned) · <a href="data/products.json">data/products.json</a>.</p>
+      <p>Already calling it: <a href="https://dawai-saathi-362.pages.dev/">Dawai Saathi</a> — a multilingual family helper.</p>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    <p class="muted">Source: Pharmaceuticals &amp; Medical Devices Bureau of India (PMBI), Product &amp; MRP List
+      (janaushadhi.gov.in), downloaded 12 Nov 2026; products with MRP 0 (“under process”) left out. Facts only, not medical
+      advice: never change a medicine or dose without your doctor or pharmacist. Independent project, not affiliated with PMBI.
+      Find a Kendra: Jan Aushadhi Sugam app · 1800-180-8080.</p>
+  </footer>
+</body>
+</html>

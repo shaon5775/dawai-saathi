@@ -1,0 +1,76 @@
+{
+  "brand": "Jan Aushadhi Price Desk",
+  "networks": [
+    {
+      "name": "jan_aushadhi_prices",
+      "front_man": "jan_aushadhi_price_desk",
+      "hocon": "./jan_aushadhi_prices.network.json",
+      "description": "Official Jan Aushadhi generic, pack and MRP for any medicine (salt + strength). Callable by any agentic website.",
+      "tags": [
+        "health",
+        "india",
+        "jan-aushadhi",
+        "generic-medicines",
+        "prices",
+        "public"
+      ],
+      "sample_queries": [
+        "Telmisartan 40 mg",
+        "Pantoprazole 40 mg + Domperidone 30 mg; Metformin 500 mg"
+      ]
+    }
+  ],
+  "llm_router": {
+    "base_url": "https://generativelanguage.googleapis.com/v1beta/openai",
+    "byok_router": "https://generativelanguage.googleapis.com/v1beta/openai",
+    "mock": false,
+    "note": "Bring your own key. A free Google AI Studio (Gemini) key works: router https://generativelanguage.googleapis.com/v1beta/openai, model gemini-3.5-flash-lite. OpenAI or OpenRouter keys also work."
+  },
+  "allowed_peers": [],
+  "peer_policy": {
+    "mode": "closed",
+    "deny_origins": [],
+    "note": "Leaf network: it calls no other site. Its price tool is a sandboxed coded tool."
+  },
+  "agent_mcp": {
+    "protocol": "nsdeploy-agent-mcp/v1",
+    "network": "jan_aushadhi_prices",
+    "front_man": "jan_aushadhi_price_desk",
+    "available": false,
+    "reason": "Static site: no public MCP facade. Call this network as a peer agent network instead (it runs in your browser)."
+  },
+  "coded_tools": {
+    "bundle": "./tools/price_lookup.js",
+    "integrity": "sha384-TtMvO4olyiLbfLNafxIc4IKYWdhWf12p0iad1u/vnn16bF2HCHjedB7t7SIeXccG"
+  },
+  "theme": {
+    "primary": "#1d6b4f"
+  },
+  "linking": {
+    "protocol": "nsdeploy-link/v1",
+    "exports": [
+      {
+        "network": "jan_aushadhi_prices",
+        "front_man": "jan_aushadhi_price_desk",
+        "aliases": [
+          "jan_aushadhi_prices",
+          "jan_aushadhi_price_desk",
+          "generic_medicine_prices"
+        ],
+        "url": "jan_aushadhi_prices"
+      }
+    ],
+    "imports": [],
+    "link_updates": {
+      "mode": "browser-local"
+    }
+  },
+  "deployment": {
+    "mode": "static",
+    "self_contained_runtime": true,
+    "browser_mock": false,
+    "direct_byok": true,
+    "direct_mcp_requires_cors": true,
+    "public_mcp_facade": false
+  }
+}

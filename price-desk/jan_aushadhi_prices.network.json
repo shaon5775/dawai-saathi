@@ -1,0 +1,56 @@
+{
+  "metadata": {
+    "description": "Jan Aushadhi price desk: give medicine salts with strength, get the official Jan Aushadhi generic, pack, MRP and price per tablet from the PMBI Product & MRP list. Any pharmacy, hospital, NGO or health website can call this network.",
+    "sample_queries": [
+      "Telmisartan 40 mg",
+      "Pantoprazole 40 mg + Domperidone 30 mg; Metformin 500 mg",
+      "Amoxycillin 500 mg + Clavulanate 125 mg tablets"
+    ]
+  },
+  "llm_config": { "model_name": "gemini-3.5-flash-lite" },
+  "max_execution_seconds": 120,
+  "tools": [
+    {
+      "name": "jan_aushadhi_price_desk",
+      "function": {
+        "description": "Finds the official Jan Aushadhi generic medicine and its MRP for each medicine (salt names with strength). Returns generic name, pack size, MRP, price per tablet/capsule, drug code and how exact the match is.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "inquiry": {
+              "type": "string",
+              "description": "One or more medicines as salt (generic) names with strength and form, separated by semicolons, e.g. 'Telmisartan 40 mg tablet; Pantoprazole 40 mg + Domperidone 30 mg capsule'"
+            }
+          },
+          "required": ["inquiry"]
+        }
+      },
+      "instructions": "You are the Jan Aushadhi price desk. For EACH medicine in the inquiry, call jan_aushadhi_lookup once with its salts and strengths (and form if given). Report ONLY what the tool returns: generic name, pack, MRP in rupees, price per unit, drug code and the match type. Never invent, round up or estimate a price. If the best match is not 'exact', say clearly what differs (strength or form) and do not present it as the same medicine. If nothing is found, say so. Finish with the tool's source line and: 'Same salt and strength only; never change a dose without the doctor or pharmacist.' Answer in plain text, one short block per medicine.",
+      "tools": ["jan_aushadhi_lookup", "jan_aushadhi_info"]
+    },
+    {
+      "name": "jan_aushadhi_lookup",
+      "function": {
+        "description": "Exact lookup in the official Jan Aushadhi Product & MRP list (PMBI). Matches salt names and strengths; returns the closest products with MRP and price per unit.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "salts": { "type": "string", "description": "Salt names with strength, e.g. 'Pantoprazole 40 mg + Domperidone 30 mg'" },
+            "form": { "type": "string", "description": "Optional: tablet, capsule, syrup, injection, cream, drops ..." },
+            "max_results": { "type": "integer", "description": "Optional, default 5" }
+          },
+          "required": ["salts"]
+        }
+      },
+      "class": "price_lookup.JanAushadhiLookup"
+    },
+    {
+      "name": "jan_aushadhi_info",
+      "function": {
+        "description": "Date and source of the price list, number of products, and how to find a Jan Aushadhi Kendra.",
+        "parameters": { "type": "object", "properties": {} }
+      },
+      "class": "price_lookup.JanAushadhiInfo"
+    }
+  ]
+}

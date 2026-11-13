@@ -1,0 +1,44 @@
+:root { --green: #1d6b4f; --green-2: #e7f3ec; --ink: #1f2a24; --muted: #5d6b63; --line: #dfe6e1; --amber: #f2b441; --bg: #fbfaf6; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Segoe UI", system-ui, -apple-system, "Noto Sans Bengali", "Noto Sans Devanagari", sans-serif;
+  color: var(--ink); background: var(--bg); line-height: 1.55; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 18px; }
+a { color: var(--green); }
+.hero { background: var(--green); color: #fff; padding: 34px 0 30px; }
+.brand { font-weight: 700; font-size: 20px; }
+.brand span { font-weight: 400; opacity: .8; font-size: 15px; margin-left: 6px; }
+.hero h1 { font-size: clamp(28px, 5vw, 44px); line-height: 1.15; margin: 18px 0 10px; }
+.hero h1 em { color: var(--amber); font-style: normal; }
+.lead { font-size: 18px; max-width: 760px; margin: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.chips span { background: rgba(255,255,255,.14); border-radius: 999px; padding: 5px 12px; font-size: 14px; }
+.how { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 22px 0; }
+.how div { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+.how p { margin: 4px 0 0; color: var(--muted); font-size: 15px; }
+section h2 { font-size: 22px; margin: 26px 0 8px; }
+.assistant { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 4px 18px 16px; }
+#assistant-status { color: var(--muted); font-size: 14px; margin: 0 0 8px; }
+#agent-app { min-height: 520px; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
+.hint { font-size: 14px; color: var(--muted); }
+.hint code { background: var(--green-2); padding: 2px 6px; border-radius: 6px; font-family: inherit; }
+table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); font-size: 15px; vertical-align: top; }
+th { background: var(--green-2); font-size: 13px; color: var(--muted); }
+.total { font-size: 18px; margin: 10px 0 4px; }
+.muted { color: var(--muted); font-size: 14px; }
+.row { display: flex; gap: 8px; margin-top: 8px; }
+button { font: inherit; border-radius: 10px; border: 0; background: var(--green); color: #fff; padding: 9px 14px; cursor: pointer; }
+button.ghost { background: #fff; color: var(--green); border: 1px solid var(--green); }
+.about p { color: var(--muted); }
+footer { margin: 28px auto 40px; font-size: 14px; border-top: 1px solid var(--line); padding-top: 14px; }
+@media print {
+  .hero, .how, .assistant, .about, footer .muted, .row { display: none !important; }
+  body { background: #fff; }
+  .list h2::after { content: " — Dawai Saathi (show to your pharmacist)"; font-weight: 400; font-size: 14px; }
+}
+
+input#q { flex: 1; font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; }
+.tag { font-size: 12px; background: #f1efe8; padding: 2px 8px; border-radius: 8px; }
+.tag.ok { background: var(--green-2); color: var(--green); }
+pre { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; overflow-x: auto; font-size: 13px; }
+.dev p { color: var(--ink); }

@@ -50,6 +50,19 @@ function canonical(value) {
   return Object.fromEntries(Object.keys(value).sort().map((k) => [k, canonical(value[k])]));
 }
 
+// Dawai Saathi patch, 13 Nov 2026: Gemini often sends a form's fields straight inside `schema`
+// ({schema:{field:{type,title}}}) without the `properties` wrapper, and the whole form was dropped.
+// Rebuild the wrapper only when every non-keyword entry is a field object, so nothing is guessed.
+function repairFormSchema(c) {
+  if (c?.kind !== "form" || !object(c.schema) || object(c.schema.properties)) return c;
+  const { type, required, ...rest } = c.schema;
+  const fields = Object.entries(rest);
+  if (!fields.length || !fields.every(([, f]) => object(f) && (typeof f.type === "string" || typeof f.title === "string"))) return c;
+  const properties = Object.fromEntries(fields);
+  const req = Array.isArray(required) ? required.filter((k) => Object.hasOwn(properties, k)) : undefined;
+  return { ...c, schema: { type: "object", properties, ...(req ? { required: req } : {}) } };
+}
+
 export function normalizePresentation(value, prefix = "component") {
   const components = [];
   const issues = [];
@@ -59,7 +72,7 @@ export function normalizePresentation(value, prefix = "component") {
   if (value?.version !== undefined && value.version !== 1) return { presentation: null, issues: ["Unsupported presentation version."] };
   for (const candidate of candidates) {
     if (candidate?.display === false) continue;
-    const c = object(candidate) ? { ...candidate, kind: candidate.kind || (candidate.schema ? "form" : "info") } : null;
+    const c = object(candidate) ? repairFormSchema({ ...candidate, kind: candidate.kind || (candidate.schema ? "form" : "info") }) : null;
     // Older confirm widgets used their label as the message.
     if (c?.kind === "confirm" && !c.confirmText) c.confirmText = c.confirmLabel || "Confirm";
     if (!validComponent(c)) { issues.push(`Invalid ${c?.kind || "presentation"} component${c?.title ? `: ${c.title}` : ""}.`); continue; }

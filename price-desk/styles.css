@@ -1,4 +1,4 @@
-:root { --green: #1d6b4f; --green-2: #e7f3ec; --ink: #1f2a24; --muted: #5d6b63; --line: #dfe6e1; --amber: #f2b441; --bg: #fbfaf6; }
+﻿:root { --green: #1d6b4f; --green-2: #e7f3ec; --ink: #1f2a24; --muted: #5d6b63; --line: #dfe6e1; --amber: #f2b441; --bg: #fbfaf6; }
 * { box-sizing: border-box; }
 body { margin: 0; font-family: "Segoe UI", system-ui, -apple-system, "Noto Sans Bengali", "Noto Sans Devanagari", sans-serif;
   color: var(--ink); background: var(--bg); line-height: 1.55; }
@@ -42,3 +42,20 @@ input#q { flex: 1; font: inherit; padding: 10px 12px; border: 1px solid var(--li
 .tag.ok { background: var(--green-2); color: var(--green); }
 pre { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; overflow-x: auto; font-size: 13px; }
 .dev p { color: var(--ink); }
+
+/* Phones: the runtime lays chat and agent panel side by side (fixed px grid). Stack them instead. */
+@media (max-width: 760px) {
+  #agent-app .ns-app { grid-template-columns: minmax(0, 1fr) !important; grid-template-rows: auto !important; }
+  #agent-app .ns-split { display: none !important; }
+  #agent-app .ns-header, #agent-app .ns-main, #agent-app .ns-agents { grid-column: 1 / -1 !important; width: auto !important; max-width: 100%; }
+  #agent-app .ns-header { flex-wrap: wrap; gap: 6px; }
+  #agent-app .ns-header { grid-row: 1 !important; }
+  #agent-app .ns-main { grid-row: 2 !important; }
+  #agent-app .ns-agents { grid-row: 3 !important; height: auto !important; max-height: 220px; overflow: auto; margin-top: 8px; }
+  #agent-app .ns-inputbar { flex-wrap: wrap; }
+  #agent-app .ns-input { min-width: 0; flex: 1 1 100%; }
+  .assistant { padding: 4px 10px 12px; }
+  .hint code { display: inline-block; margin: 2px 0; }
+  table { font-size: 13px; }
+  th, td { padding: 6px; }
+}

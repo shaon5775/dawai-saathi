@@ -41,7 +41,7 @@
   },
   "coded_tools": {
     "bundle": "./tools/price_lookup.js",
-    "integrity": "sha384-TtMvO4olyiLbfLNafxIc4IKYWdhWf12p0iad1u/vnn16bF2HCHjedB7t7SIeXccG"
+    "integrity": "sha384-JvrpZe3S7UqTCt7sBiiSZglh8msdej5pq6EstCLjwbE3Ds0cYVN0RaRb4uE+p/ow"
   },
   "theme": {
     "primary": "#1d6b4f"

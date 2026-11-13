@@ -52,6 +52,7 @@ User (bn / hi / en)                      dawai-saathi-362.pages.dev             
 | “আমার মা Glycomet GP 1 আর Ecosprin 75 খান। সস্তা কোনটা?” | Answer in Bengali with salts, Jan Aushadhi generic, pack and MRP. |
 | “मेरे पापा Rosuvas 10 और Amlong 5 लेते हैं, सस्ता विकल्प?” | Answer in Hindi: Rosuvastatin 10 mg → ₹19.28/15 (₹1.29 each); Amlodipine 5 mg → ₹5.68/10 (₹0.57); then asks before saving the list. |
 | Same, user clicks **Decline** on the consent dialog | Salts only, says prices could not be fetched, invents nothing, points to the Kendra helpline. |
+| “My mother takes Glycomet 500 and Ecosprin 75. Is there a cheaper one?” (no prices given) | Exact generics (Metformin 500 mg ₹6.81/10, Aspirin 75 mg ₹2.81/14), then a CRUSE form asks for strip price, tablets per strip and per day; after Submit: **₹175.98 saved per month** (checked by hand). |
 | Phone (375 px) | Both sites fit with no sideways scrolling; chat, agents panel and settings stack. |
 
 ### Safety of the price match (`node tools/test_lookup.mjs`)
@@ -61,19 +62,21 @@ User (bn / hi / en)                      dawai-saathi-362.pages.dev             
   (“same salt, different release type — ask the pharmacist”). Pan-D (Domperidone SR capsule) still matches exactly.
 - Common medicines: 9 of 11 exact; the other two are honestly labelled (form or release type differs).
 
-### Spec checks without an AI key (`node tools/spec_checks.mjs` → 18 passed)
+### Spec checks without an AI key (`node tools/spec_checks.mjs` → 20 passed)
 
 Both networks validate; a network with a missing or **duplicate** agent is rejected before any model call; a
 Saathi → Price Desk → Saathi cycle and a depth over 5 are stopped; budgets (one call per peer, 4 third-party calls,
 24 agent calls, 90 s) refuse over-budget requests; only the Price Desk origin is allowed and the Price Desk calls no
 one; peers always run on the caller's router (the key never goes to a peer); the live coded-tool bundle matches its
-SRI pin (a tampered one would not); the sandbox worker is served with the strict CSP.
+SRI pin (a tampered one would not); the sandbox worker is served with the strict CSP; a CRUSE form sent without the
+`properties` wrapper is repaired, while a form with no real fields is still rejected.
 
 ## Community contributions
 
-1. **Three fixes to the reference nsDeploy runtime** (see `runtime/CHANGES.md`): for Gemini 3, keep the tool-call
+1. **Four fixes to the reference nsDeploy runtime** (see `runtime/CHANGES.md`): for Gemini 3, keep the tool-call
    `thought_signature` and route streamed parallel tool calls by `id` (without them every Gemini 3 tool call fails
-   with HTTP 400); and reject duplicate agent names, as the MVP spec requires.
+   with HTTP 400); reject duplicate agent names, as the MVP spec requires; and repair CRUSE forms whose fields arrive
+   without the `properties` wrapper (Gemini does this often, and the whole form used to be dropped).
 2. **`tools/spec_checks.mjs`** — a reusable, key-free check of the spec's MVP interoperability rules against any
    pair of published sites.
 3. **Free BYOK with Gemini:** Gemini's OpenAI-compatible endpoint

@@ -49,18 +49,37 @@ User (bn / hi / en)                      dawai-saathi-362.pages.dev             
 | Question | Result |
 |---|---|
 | “Doctor wrote Pan-D and Telma 40. Is there a cheaper one?” | Pan-D → Pantoprazole 40 mg + Domperidone 30 mg → Jan Aushadhi capsules ₹22.69/10 (₹2.27 each); Telma 40 → Telmisartan 40 mg → ₹12.38/10 (₹1.24). Example prices ₹250 and ₹200 per strip of 15, one a day → **₹794.79 saved per month** (checked by hand). |
-| “আমার মা Glycomet GP 1 আর Ecosprin 75 খান। সস্তা কোনটা?” | Answer in Bengali: Glimepiride 1 mg + Metformin 500 mg → ₹18.15/10; Aspirin 75 mg generic. |
-| Lookup tool alone (`node tools/test_lookup.mjs`) | 10 of 11 common medicines matched exactly on salt + strength; the 11th (Pan-D) is a capsule in the official list and is reported as such. |
+| “আমার মা Glycomet GP 1 আর Ecosprin 75 খান। সস্তা কোনটা?” | Answer in Bengali with salts, Jan Aushadhi generic, pack and MRP. |
+| “मेरे पापा Rosuvas 10 और Amlong 5 लेते हैं, सस्ता विकल्प?” | Answer in Hindi: Rosuvastatin 10 mg → ₹19.28/15 (₹1.29 each); Amlodipine 5 mg → ₹5.68/10 (₹0.57); then asks before saving the list. |
+| Same, user clicks **Decline** on the consent dialog | Salts only, says prices could not be fetched, invents nothing, points to the Kendra helpline. |
+| Phone (375 px) | Both sites fit with no sideways scrolling; chat, agents panel and settings stack. |
+
+### Safety of the price match (`node tools/test_lookup.mjs`)
+
+- “exact” means same salts, same strengths, same form **and same release type**. A single-salt query never matches a
+  combination product (e.g. Metformin 500 mg ≠ Sitagliptin 50 mg & Metformin 500 mg), and plain ≠ SR/ER
+  (“same salt, different release type — ask the pharmacist”). Pan-D (Domperidone SR capsule) still matches exactly.
+- Common medicines: 9 of 11 exact; the other two are honestly labelled (form or release type differs).
+
+### Spec checks without an AI key (`node tools/spec_checks.mjs` → 18 passed)
+
+Both networks validate; a network with a missing or **duplicate** agent is rejected before any model call; a
+Saathi → Price Desk → Saathi cycle and a depth over 5 are stopped; budgets (one call per peer, 4 third-party calls,
+24 agent calls, 90 s) refuse over-budget requests; only the Price Desk origin is allowed and the Price Desk calls no
+one; peers always run on the caller's router (the key never goes to a peer); the live coded-tool bundle matches its
+SRI pin (a tampered one would not); the sandbox worker is served with the strict CSP.
 
 ## Community contributions
 
-1. **Two fixes to the reference nsDeploy runtime for Gemini 3** (`*/runtime/llm.js`, see `runtime/CHANGES.md`):
-   keep the tool-call `thought_signature`, and route streamed parallel tool calls by `id`. Without them every
-   Gemini 3 tool call fails with HTTP 400.
-2. **Free BYOK with Gemini:** Gemini's OpenAI-compatible endpoint
+1. **Three fixes to the reference nsDeploy runtime** (see `runtime/CHANGES.md`): for Gemini 3, keep the tool-call
+   `thought_signature` and route streamed parallel tool calls by `id` (without them every Gemini 3 tool call fails
+   with HTTP 400); and reject duplicate agent names, as the MVP spec requires.
+2. **`tools/spec_checks.mjs`** — a reusable, key-free check of the spec's MVP interoperability rules against any
+   pair of published sites.
+3. **Free BYOK with Gemini:** Gemini's OpenAI-compatible endpoint
    `https://generativelanguage.googleapis.com/v1beta/openai` allows browser CORS, so a free Google AI Studio key works
    on any static agentic site (use the model id exactly as listed, e.g. `models/gemini-3.5-flash-lite`).
-3. **A reusable public network:** the Jan Aushadhi Price Desk — see "Call this network" on its home page.
+4. **A reusable public network:** the Jan Aushadhi Price Desk — see "Call this network" on its home page.
 
 ## Repository layout
 

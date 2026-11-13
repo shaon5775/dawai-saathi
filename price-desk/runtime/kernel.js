@@ -208,6 +208,15 @@ export function validateNetwork(network) {
   const errors = validate_network(network.config).filter((message) =>
     ![...network.linkSlots].some((ref) => message.includes(`references missing tool '${ref}'.`))
   );
+  // Dawai Saathi patch, 13 Nov 2026: the MVP spec (3.1) says duplicate agent definitions must be rejected, but the
+  // agent map silently kept the last one. Report every duplicated name.
+  const seen = new Set();
+  for (const agent of network.config.tools || []) {
+    const name = agent && agent.name;
+    if (typeof name !== "string") continue;
+    if (seen.has(name)) errors.push(`Duplicate agent name '${name}': each agent in a network must be defined once.`);
+    seen.add(name);
+  }
   const warnings = [];
 
   // The externals/mcps list (for the trace's cross-origin permission view) is a

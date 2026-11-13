@@ -43,7 +43,7 @@
   },
   "coded_tools": {
     "bundle": "./tools/brand_lookup.js",
-    "integrity": "sha384-Zsu4FJAPw20lJFhqOXG6dzb7Vq+jazNbF8RjuerFmkgn25oZitIiKGhd9DRr91Oq"
+    "integrity": "sha384-CkGeS4Lumv1+YCC3x1K2tilXEdl1LVEYVIbQL57wB9CT4br32qklJJmHYKcsGnhd"
   },
   "theme": {
     "primary": "#1d6b4f"

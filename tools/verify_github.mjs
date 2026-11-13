@@ -5,7 +5,7 @@ import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(fileURLToPath(new URL(".", import.meta.url)), "..");
-const SKIP = new Set([".wrangler", "node_modules", "ref", "spec-notes", "HANDOVER.md", ".git"]);
+const SKIP = new Set([".wrangler", "node_modules", "ref", "spec-notes", "HANDOVER.md", ".git", "submission"]);
 const local = new Map();
 (function walk(dir) {
   for (const name of readdirSync(dir)) {
